@@ -39,11 +39,13 @@ import { filterImageFromURL, deleteLocalFiles } from "./util/util";
       if (!image_url) {
         res.status(400).send("Image url required!!!");
       } else {
-      //    2. call filterImageFromURL(image_url) to filter the image
+        //    2. call filterImageFromURL(image_url) to filter the image
         await filterImageFromURL(image_url).then(function (
           image_filtered_path
         ) {
+          //    3. send the resulting file in the response
           res.sendFile(image_filtered_path, () => {
+            ///   4. deletes any files on the server on finish of the response
             deleteLocalFiles([image_filtered_path]);
           });
         });
