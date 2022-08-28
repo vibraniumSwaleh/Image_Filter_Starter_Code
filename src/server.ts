@@ -32,24 +32,28 @@ import { filterImageFromURL, deleteLocalFiles } from "./util/util";
 
   /* https://upload.wikimedia.org/wikipedia/commons/b/bd/Golden_tabby_and_white_kitten_n01.jpg cannot be used since this URL will not work correctly with CORS. It does not have the access-control-allow-origin header set to *. Without this header, requests from other domains cannot be made to it via a users browser. */
 
-  /* sample link that works:  
+  /* sample link for dev server:
   http://localhost:8082/filteredimage?image_url=https%3A%2F%2Fcdn.motor1.com%2Fimages%2Fmgl%2Fmrz1e%2Fs1%2Fcoolest-cars-feature.jpg&imgrefurl=https%3A%2F%2Fwww.motor1.com%2Ffeatures%2F447037%2Fcoolest-cars%2F&tbnid=z4t7U0uZlwRpRM&vet=12ahUKEwi73Nv5yuX5AhXvSkEAHbdtBJoQMygNegUIARCSAw..i&docid=LBt-IiFPpVXXIM&w=1920&h=1080&q=car&ved=2ahUKEwi73Nv5yuX5AhXvSkEAHbdtBJoQMygNegUIARCSAw */
 
-  app.get("/filteredimage", async (req: express.Request, res: express.Response) => {
-  
-  let { image_url } = req.query;
-    
+  /* sample link for eb app:
+  http://image-filter-starter-code-dns-v8.us-east-1.elasticbeanstalk.com/filteredimage?image_url=https%3A%2F%2Fwww.thesprucepets.com%2Fthmb%2FIBgXJ7zVIruAbtVTyHtZi59LoB0%3D%2F6078x3419%2Fsmart%2Ffilters%3Ano_upscale()%2Flow-maintenance-freshwater-fish-4770223-hero-ffb66c229c194e2db4916e88bbd17a15.jpg&imgrefurl=https%3A%2F%2Fwww.thesprucepets.com%2Flow-maintenance-freshwater-fish-4770223&tbnid=-iwZ5DGaOvnpqM&vet=12ahUKEwie9qeVmOr5AhWSQcAKHQy6CLQQMygBegUIARCNAw..i&docid=H4xy1AooR00hPM&w=6078&h=3419&q=fish&ved=2ahUKEwie9qeVmOr5AhWSQcAKHQy6CLQQMygBegUIARCNAw */
 
-//   1. validate the image_url query
+
+  https: app.get(
+    "/filteredimage",
+    async (req: express.Request, res: express.Response) => {
+      let { image_url } = req.query;
+
+      //   1. validate the image_url query
       if (!image_url) {
         res.status(400).send("Image url required!!!");
       } else {
-//   2. call filterImageFromURL(image_url) to filter the image
+      //   2. call filterImageFromURL(image_url) to filter the image
         await filterImageFromURL(image_url.toString())
           .then(function (image_filtered_path) {
-//   3. send the resulting file in the response
+      //   3. send the resulting file in the response
             res.sendFile(image_filtered_path, () => {
-//   4. deletes any files on the server on finish of the response
+      //   4. deletes any files on the server on finish of the response
               deleteLocalFiles([image_filtered_path]);
             });
           })
